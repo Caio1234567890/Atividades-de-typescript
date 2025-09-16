@@ -1,0 +1,53 @@
+// 1) Tipos fixos (literais) e união
+type Tipo = 'carro' | 'moto' | 'caminhao'; // só pode ser um desses
+type Placa = string;                      // só um apelido pra string
+
+interface Veiculo {
+  placa: Placa;
+  tipo: Tipo;
+  ano: number;
+  fabricante: string;
+  cor: string;
+}
+
+const v1: Veiculo = {
+  placa: 'ABC1D23',
+  tipo: 'carro',
+  ano: 2020,
+  fabricante: 'Chevrolet',
+  cor: 'preto'
+};
+console.log('1) Veículo:', v1);
+
+// 2) Lista de veículos, filtrando e pegando dados
+const frota: Veiculo[] = [
+  v1,
+  { placa: 'XYZ9K88', tipo: 'moto',     ano: 2018, fabricante: 'Honda', cor: 'vermelho' },
+  { placa: 'JKL2M34', tipo: 'caminhao', ano: 2022, fabricante: 'Volvo', cor: 'branco' },
+];
+
+const soCarros = frota.filter(v => v.tipo === 'carro'); // só os carros
+const anos = frota.map(v => v.ano);                     // pega apenas os anos
+console.log('2) Filtros/Map:', { soCarros, anos });
+
+// 3) Enum de cores padrão + função para mudar a cor
+enum CorPadrao { Preto = 'preto', Branco = 'branco', Vermelho = 'vermelho' }
+function pintar(v: Veiculo, cor: CorPadrao): Veiculo {
+  return { ...v, cor }; // retorna uma cópia com a cor nova
+}
+console.log('3) Pintando veículo:', pintar(v1, CorPadrao.Branco));
+
+// 4) Deixa a placa só com letras/números e em maiúsculas
+function normalizarPlaca(p: string): Placa {
+  return p.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+}
+console.log('4) Placa normalizada:', normalizarPlaca('abc-1d23'));
+
+// 5) Agrupa a frota por tipo (carro, moto, caminhão)
+const porTipo = new Map<Tipo, Veiculo[]>();
+for (const v of frota) {
+  const arr = porTipo.get(v.tipo) ?? []; // pega a lista atual ou cria nova
+  arr.push(v);
+  porTipo.set(v.tipo, arr);
+}
+console.log('5) Agrupados por tipo:', Array.from(porTipo.entries()));
