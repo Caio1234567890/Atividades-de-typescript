@@ -1,0 +1,81 @@
+// 1) O TS já entende o tipo sozinho
+let idade = 18;              // número
+const nome = 'Eduardo';      // texto
+let ativo = true;            // verdadeiro/falso
+console.log('1) Inferência:', { idade, nome, ativo });
+
+// 2) Aqui a gente diz o tipo na mão
+let taxa: number = 12.5;
+const mensagem: string = 'Olá, mundo';
+let habilitado: boolean = false;
+console.log('2) Tipos explícitos:', { taxa, mensagem, habilitado });
+
+// 3) Lista de dados (array)
+const placas: string[] = ['ABC1D23', 'XYZ9K88'];      // lista de texto
+const notas: Array<number> = [8, 9, 10];              // lista de números
+console.log('3) Arrays:', { placas, notas });
+
+// 4) Tupla = lista com tamanho e tipos fixos
+const coordenada: [number, number] = [23.5, -46.6];
+console.log('4) Tupla:', coordenada);
+
+// 5) Objeto com um tipo criado por nós
+type Veiculo = { placa: string; modelo: string; ano: number };
+const carro: Veiculo = { placa: 'ABC1D23', modelo: 'Onix', ano: 2020 };
+console.log('5) Objeto + type:', carro);
+
+// 6) Pode ser mais de um tipo (união)
+let id: number | string = 42;
+id = '42'; // também funciona
+console.log('6) União:', id);
+
+// 7) Tipo fixo (literal) e valores só de leitura
+type StatusTicket = 'ABERTO' | 'FECHADO';
+const statusTicket: StatusTicket = 'ABERTO';
+const PI = 3.14159 as const; // número fixo
+const config = { tema: 'dark', versao: 1 } as const; // nada aqui pode mudar
+console.log('7) Literais/readonly:', { statusTicket, PI, config });
+
+// 8) Enum = lista de opções com nome
+enum TipoVeiculo { Carro = 'carro', Moto = 'moto', Caminhao = 'caminhao' }
+const tipo: TipoVeiculo = TipoVeiculo.Carro;
+console.log('8) Enum:', tipo);
+
+// 9) Map/Set com tipo definido (genérico)
+const tabelaPrecos = new Map<string, number>();
+tabelaPrecos.set('carro', 12.5).set('moto', 8.0).set('caminhao', 20);
+console.log('9) Map genérico:', Array.from(tabelaPrecos.entries()));
+
+// 10) 'as const' cria valores fixos, e typeof pega os tipos
+const cores = ['vermelho', 'azul'] as const;
+type Cor = typeof cores[number]; // só pode ser 'vermelho' ou 'azul'
+const minhaCor: Cor = 'azul';
+console.log('10) as const:', { cores: [...cores], minhaCor });
+
+// 11) Interface = jeito de descrever objeto
+interface Usuario {
+  readonly id: string; // não pode mudar
+  nome: string;
+  email?: string;      // opcional
+}
+const u: Usuario = { id: 'u1', nome: 'Ana' };
+// u.id = 'u2'; // dá erro se tentar mudar
+console.log('11) Interface:', u);
+
+// 12) Funções com tipo definido
+function soma(a: number, b: number): number { return a + b; }
+const somar: (x: number, y: number) => number = (x, y) => x + y;
+console.log('12) Funções:', soma(2, 3), somar(5, 7));
+
+// 13) Função genérica (aceita qualquer tipo)
+function identidade<T>(valor: T): T { return valor; }
+console.log('13) Genérica:', identidade<string>('ok'), identidade<number>(99));
+
+// 14) Checagem de tipo pra tratar cada caso
+function formatarId(val: number | string): string {
+  if (typeof val === 'number') return val.toString().padStart(3, '0');
+  return val.toUpperCase();
+}
+console.log('14) Narrowing:', formatarId(7), formatarId('abc'));
+
+export {}; // mantém o arquivo como módulo
