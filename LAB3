@@ -1,0 +1,44 @@
+// 1) Lista de temperaturas em °C e cálculo da média
+const leiturasC: number[] = [22.5, 23.1, 24.0, 25.2, 26.5];
+const mediaTemp = Number(
+  (leiturasC.reduce((a, b) => a + b, 0) / leiturasC.length).toFixed(2)
+);
+console.log('1) Média (°C):', mediaTemp);
+
+// 2) Objeto com uma leitura + função que converte °C para °F
+type Leitura = { timestamp: string; tempC: number };
+function cToF(c: number): number {
+  return Number((c * 9/5 + 32).toFixed(2));
+}
+const l1: Leitura = { timestamp: new Date().toISOString(), tempC: 25.3 };
+console.log('2) Leitura:', l1, '=> °F:', cToF(l1.tempC));
+
+// 3) Enum para indicar nível de alerta e função que classifica
+enum Alerta { Ok = 'OK', Atencao = 'ATENCAO', Critico = 'CRITICO' }
+function classificar(tC: number): Alerta {
+  if (tC >= 28) return Alerta.Critico;      // muito quente
+  if (tC >= 25) return Alerta.Atencao;      // precisa ficar de olho
+  return Alerta.Ok;                         // temperatura normal
+}
+console.log('3) Status:', leiturasC.map(t => ({ t, status: classificar(t) })));
+
+// 4) Média móvel simples com tamanho de janela definido
+function mediaMovel(valores: number[], janela: number): number[] {
+  const out: number[] = [];
+  for (let i = 0; i < valores.length; i++) {
+    const ini = Math.max(0, i - janela + 1);             // início da janela
+    const slice = valores.slice(ini, i + 1);             // pega os últimos N
+    const media = slice.reduce((a, b) => a + b, 0) / slice.length;
+    out.push(Number(media.toFixed(2)));
+  }
+  return out;
+}
+console.log('4) Média móvel (janela=3):', mediaMovel(leiturasC, 3));
+
+// 5) Aceita unidade em °C ou °F e formata o texto
+type Unidade = 'C' | 'F';
+function formatTemp(valor: number, unidade: Unidade): string {
+  if (unidade === 'C') return `${valor.toFixed(1)} °C`;
+  return `${valor.toFixed(1)} °F`;
+}
+console.log('5) Format:', formatTemp(25.35, 'C'), formatTemp(cToF(25.35), 'F'));
